@@ -28,6 +28,8 @@ class Engine:
         yielding zero or more events in response."""
         if isinstance(event, events.OpenDatabaseEvent):
             yield engine_open_event(event)
+        elif isinstance(event, events.CloseDatabaseEvent):
+            yield engine_close_event()
         # This is a way to write a generator function that always yields zero values.
         # You'll want to remove this and replace it with your own code, once you start
         # writing your engine, but this at least allows the program to run.
