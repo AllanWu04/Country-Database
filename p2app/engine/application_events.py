@@ -22,3 +22,8 @@ def engine_open_event(view_event):
 def engine_close_event():
     """Close file on engine side"""
     return events.DatabaseClosedEvent()
+
+
+def engine_end_application():
+    """Completely exits out of the application"""
+    return events.EndApplicationEvent()
