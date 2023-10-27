@@ -10,7 +10,7 @@
 
 from p2app import events
 from .application_events import *
-
+from .continent_events import *
 class Engine:
     """An object that represents the application's engine, whose main role is to
     process events sent to it by the user interface, then generate events that are
@@ -20,18 +20,19 @@ class Engine:
 
     def __init__(self):
         """Initializes the engine"""
-        pass
-
+        self.create_connection = None
 
     def process_event(self, event):
         """A generator function that processes one event sent from the user interface,
         yielding zero or more events in response."""
         if isinstance(event, events.OpenDatabaseEvent):
-            yield engine_open_event(event)
+            yield engine_open_event(event, self)
         elif isinstance(event, events.CloseDatabaseEvent):
             yield engine_close_event()
         elif isinstance(event, events.QuitInitiatedEvent):
             yield engine_end_application()
+        elif isinstance(event, events.StartContinentSearchEvent):
+            yield engine_continent_search_result(event, self.create_connection)
         # This is a way to write a generator function that always yields zero values.
         # You'll want to remove this and replace it with your own code, once you start
         # writing your engine, but this at least allows the program to run.
