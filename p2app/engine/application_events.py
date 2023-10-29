@@ -12,6 +12,7 @@ def create_connection(event):
 def engine_open_event(view_event, engine):
     """Attempt to open the file on the engine side."""
     engine.create_connection = create_connection(view_event)
+    engine.create_connection.execute('PRAGMA foreign_keys = ON;')
     event_pth = view_event.path()
     if event_pth.name.endswith(".db"):
         connect = create_connection(view_event)
