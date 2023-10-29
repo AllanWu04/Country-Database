@@ -47,15 +47,15 @@ def engine_continent_loaded(view_event, connection):
 
 def engine_save_new_continent(view_event, connection):
     get_continent_from_view = view_event.continent()
-    name_of_new_continent = get_continent_from_view.name
     continent_code_of_new_continent = get_continent_from_view.continent_code
-    cursor = connection.execute('SELECT continent_id, continent_code, name '
-                                'FROM continent WHERE name = (?) or continent_code = (?);',
-                                (name_of_new_continent, continent_code_of_new_continent))
+    cursor = connection.execute('SELECT * '
+                                'FROM continent WHERE continent_code = (?);',
+                                (continent_code_of_new_continent,))
     check_if_exists = cursor.fetchone()
-    if check_if_exists is None:
+    if check_if_exists is None and get_continent_from_view.name != '' and continent_code_of_new_continent != '':
         connection.execute('INSERT INTO continent (continent_id, continent_code, name) '
-                           'VALUES (?, ?, ?);', (get_continent_from_view[0], get_continent_from_view[1], get_continent_from_view[2]))
+                           'VALUES (?, ?, ?);',
+                           (get_continent_from_view[0], get_continent_from_view[1], get_continent_from_view[2]))
         return events.ContinentSavedEvent(get_continent_from_view)
     else:
         return events.SaveContinentFailedEvent("This Continent Already Exists!")
