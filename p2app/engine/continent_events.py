@@ -41,3 +41,16 @@ def engine_continent_loaded(view_event, connection):
     get_info = cursor.fetchone()
     create_continent = Continent(get_info[0], get_info[1], get_info[2])
     return events.ContinentLoadedEvent(create_continent)
+
+
+def engine_save_new_continent(view_event, connection):
+    get_continent_from_view = view_event.continent()
+    name_of_new_continent = get_continent_from_view.name
+    cursor = connection.execute('SELECT continent_id, continent_code, name '
+                                'FROM continent WHERE name = (?)', (name_of_new_continent,))
+    check_if_exists = cursor.fetchone()
+    if check_if_exists is None:
+        return events.ContinentSavedEvent(get_continent_from_view)
+    else:
+        return events.SaveContinentFailedEvent("This Continent Already Exists!")
+
