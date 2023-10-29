@@ -9,7 +9,6 @@ def create_connection(event):
     return connection
 
 
-
 def engine_open_event(view_event, engine):
     """Attempt to open the file on the engine side."""
     engine.create_connection = create_connection(view_event)
