@@ -1,3 +1,5 @@
+import sqlite3
+
 from .application_events import *
 from p2app import events
 from ..events import Continent
@@ -57,4 +59,18 @@ def engine_save_new_continent(view_event, connection):
         return events.ContinentSavedEvent(get_continent_from_view)
     else:
         return events.SaveContinentFailedEvent("This Continent Already Exists!")
+
+
+def engine_save_edited_continent(view_event, connection):
+    get_view_continent = view_event.continent()
+    view_continent_id = get_view_continent.continent_id
+    view_continent_code = get_view_continent.continent_code
+    view_continent_name = get_view_continent.name
+    try:
+        cursor = connection.execute('UPDATE continent SET continent_code = (?), name = (?) '
+                                    'WHERE continent_id = (?);',
+                                    (view_continent_code, view_continent_name, view_continent_id))
+        return events.ContinentSavedEvent(get_view_continent)
+    except sqlite3.IntegrityError:
+        return events.SaveContinentFailedEvent("This Continent is Invalid!")
 

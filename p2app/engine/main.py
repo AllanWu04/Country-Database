@@ -37,6 +37,8 @@ class Engine:
             yield engine_continent_loaded(event, self.create_connection)
         elif isinstance(event, events.SaveNewContinentEvent):
             yield engine_save_new_continent(event, self.create_connection)
+        elif isinstance(event, events.SaveContinentEvent):
+            yield engine_save_edited_continent(event, self.create_connection)
 
         # This is a way to write a generator function that always yields zero values.
         # You'll want to remove this and replace it with your own code, once you start
