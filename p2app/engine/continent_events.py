@@ -58,7 +58,7 @@ def engine_save_new_continent(view_event, connection):
                            (get_continent_from_view[0], get_continent_from_view[1], get_continent_from_view[2]))
         return events.ContinentSavedEvent(get_continent_from_view)
     else:
-        return events.SaveContinentFailedEvent("This Continent Already Exists!")
+        return events.SaveContinentFailedEvent("This Continent is Invalid")
 
 
 def engine_save_edited_continent(view_event, connection):
@@ -66,6 +66,8 @@ def engine_save_edited_continent(view_event, connection):
     view_continent_id = get_view_continent.continent_id
     view_continent_code = get_view_continent.continent_code
     view_continent_name = get_view_continent.name
+    if view_continent_code == '' or view_continent_name == '':
+        return events.SaveContinentFailedEvent("This Continent is Invalid!")
     try:
         cursor = connection.execute('UPDATE continent SET continent_code = (?), name = (?) '
                                     'WHERE continent_id = (?);',
