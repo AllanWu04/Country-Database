@@ -11,6 +11,7 @@
 from p2app import events
 from .application_events import *
 from .continent_events import *
+from .country_events import *
 class Engine:
     """An object that represents the application's engine, whose main role is to
     process events sent to it by the user interface, then generate events that are
@@ -39,7 +40,8 @@ class Engine:
             yield engine_save_new_continent(event, self.create_connection)
         elif isinstance(event, events.SaveContinentEvent):
             yield engine_save_edited_continent(event, self.create_connection)
-
+        elif isinstance(event, events.StartCountrySearchEvent):
+            yield engine_start_country_search_event(event, self.create_connection)
         # This is a way to write a generator function that always yields zero values.
         # You'll want to remove this and replace it with your own code, once you start
         # writing your engine, but this at least allows the program to run.

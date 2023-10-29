@@ -37,6 +37,7 @@ def engine_continent_search_result(view_event, connection):
 
 
 def engine_continent_loaded(view_event, connection):
+    """Loads information about continent when edited"""
     continent_id = view_event.continent_id()
     cursor = connection.execute('SELECT continent_id, continent_code, name '
                                 'FROM continent WHERE continent_id = (?);', (continent_id,))
@@ -46,6 +47,7 @@ def engine_continent_loaded(view_event, connection):
 
 
 def engine_save_new_continent(view_event, connection):
+    """Creates a new continent with name and continent code"""
     get_continent_from_view = view_event.continent()
     continent_code_of_new_continent = get_continent_from_view.continent_code
     cursor = connection.execute('SELECT * '
@@ -62,6 +64,7 @@ def engine_save_new_continent(view_event, connection):
 
 
 def engine_save_edited_continent(view_event, connection):
+    """Edits a continent by changing its name and/or continent code"""
     get_view_continent = view_event.continent()
     view_continent_id = get_view_continent.continent_id
     view_continent_code = get_view_continent.continent_code
