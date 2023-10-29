@@ -33,6 +33,8 @@ class Engine:
             yield engine_end_application()
         elif isinstance(event, events.StartContinentSearchEvent):
             yield engine_continent_search_result(event, self.create_connection)
+        elif isinstance(event, events.LoadContinentEvent):
+            yield engine_continent_loaded(event, self.create_connection)
         # This is a way to write a generator function that always yields zero values.
         # You'll want to remove this and replace it with your own code, once you start
         # writing your engine, but this at least allows the program to run.

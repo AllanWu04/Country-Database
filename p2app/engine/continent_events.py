@@ -34,3 +34,10 @@ def engine_continent_search_result(view_event, connection):
         return events.ContinentSearchResultEvent(create_continent)
 
 
+def engine_continent_loaded(view_event, connection):
+    continent_id = view_event.continent_id()
+    cursor = connection.execute('SELECT continent_id, continent_code, name '
+                                'FROM continent WHERE continent_id = (?)', (continent_id,))
+    get_info = cursor.fetchone()
+    create_continent = Continent(get_info[0], get_info[1], get_info[2])
+    return events.ContinentLoadedEvent(create_continent)
