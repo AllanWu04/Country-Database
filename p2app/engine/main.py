@@ -53,6 +53,8 @@ class Engine:
                     make_country_obj = Country(i[0], i[1], i[2], i[3], i[4], i[5])
                     yield events.CountrySearchResultEvent(make_country_obj)
             yield engine_start_country_search_event(event, self.create_connection)
+        elif isinstance(event, events.LoadCountryEvent):
+            yield engine_loaded_country_event(event, self.create_connection)
         # This is a way to write a generator function that always yields zero values.
         # You'll want to remove this and replace it with your own code, once you start
         # writing your engine, but this at least allows the program to run.

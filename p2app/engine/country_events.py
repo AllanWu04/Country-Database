@@ -34,3 +34,13 @@ def engine_start_country_search_event(view_event, connection):
             return None
         create_country = Country(get_info[0], get_info[1], get_info[2], get_info[3], get_info[4], get_info[5])
         return events.CountrySearchResultEvent(create_country)
+
+
+def engine_loaded_country_event(view_event, connection):
+    """Return the information of a country when edited"""
+    get_country_id = view_event.country_id()
+    find_country = connection.execute('SELECT country_id, country_code, name, continent_id, wikipedia_link, keywords '
+                                      'FROM country WHERE country_id = (?)', (get_country_id,))
+    get_country = find_country.fetchone()
+    make_country = Country(get_country[0], get_country[1], get_country[2], get_country[3], get_country[4], get_country[5])
+    return events.CountryLoadedEvent(make_country)
