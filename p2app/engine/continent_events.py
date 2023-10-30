@@ -12,11 +12,10 @@ def engine_continent_search_result(view_event, connection):
     if continent_name and continent_code is None:
         cursor = connection.execute('SELECT continent_id, continent_code, name '
                                     'FROM continent WHERE name = (?);', (continent_name,))
-        get_continent = cursor.fetchone()
+        get_continent = cursor.fetchall()
         if get_continent is None:
             return None
-        create_continent = Continent(get_continent[0], get_continent[1], get_continent[2])
-        return events.ContinentSearchResultEvent(create_continent)
+        return get_continent
     elif continent_code and continent_name is None:
         cursor = connection.execute('SELECT continent_id, continent_code, name '
                                     'FROM continent WHERE continent_code = (?);', (continent_code,))

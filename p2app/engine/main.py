@@ -12,6 +12,7 @@ from p2app import events
 from .application_events import *
 from .continent_events import *
 from .country_events import *
+from p2app import events
 class Engine:
     """An object that represents the application's engine, whose main role is to
     process events sent to it by the user interface, then generate events that are
@@ -33,6 +34,11 @@ class Engine:
         elif isinstance(event, events.QuitInitiatedEvent):
             yield engine_end_application()
         elif isinstance(event, events.StartContinentSearchEvent):
+            if event.continent_code() is None:
+                continent_results = engine_continent_search_result(event, self.create_connection)
+                for i in continent_results:
+                    make_continent = Continent(i[0], i[1], i[2])
+                    yield events.ContinentSearchResultEvent(make_continent)
             yield engine_continent_search_result(event, self.create_connection)
         elif isinstance(event, events.LoadContinentEvent):
             yield engine_continent_loaded(event, self.create_connection)
