@@ -12,7 +12,9 @@ from p2app import events
 from .application_events import *
 from .continent_events import *
 from .country_events import *
+from .region_events import *
 from p2app import events
+
 class Engine:
     """An object that represents the application's engine, whose main role is to
     process events sent to it by the user interface, then generate events that are
@@ -59,6 +61,13 @@ class Engine:
             yield engine_save_new_country(event, self.create_connection)
         elif isinstance(event, events.SaveCountryEvent):
             yield engine_save_edited_country(event, self.create_connection)
+        elif isinstance(event, events.StartRegionSearchEvent):
+            if event.region_code() is None:
+                all_region_results = engine_start_region_search_event(event, self.create_connection)
+                for i in all_region_results:
+                    make_region_obj = Region(i[0], i[1], i[2], i[3], i[4], i[5], i[6], i[7])
+                    yield events.RegionSearchResultEvent(make_region_obj)
+            yield engine_start_region_search_event(event, self.create_connection)
         # This is a way to write a generator function that always yields zero values.
         # You'll want to remove this and replace it with your own code, once you start
         # writing your engine, but this at least allows the program to run.
