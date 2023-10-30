@@ -1,3 +1,4 @@
+import sqlite3
 
 from .application_events import *
 from p2app import events
@@ -44,3 +45,24 @@ def engine_loaded_country_event(view_event, connection):
     get_country = find_country.fetchone()
     make_country = Country(get_country[0], get_country[1], get_country[2], get_country[3], get_country[4], get_country[5])
     return events.CountryLoadedEvent(make_country)
+
+
+def engine_save_new_country(view_event, connection):
+    """Creates a new country with given information from view_event"""
+    get_view_country = view_event.country()
+    check_exist_country = connection.execute('SELECT * FROM country '
+                                             'WHERE country_code = (?)', (get_view_country[1],))
+    attempt_get_country = check_exist_country.fetchone()
+    if attempt_get_country is None and get_view_country[2] != '' and get_view_country[3] != '' and get_view_country[4] != '':
+        try:
+            connection.execute('INSERT INTO country '
+                           '(country_id, country_code, name, continent_id, wikipedia_link, keywords) '
+                           'VALUES (?, ?, ?, ?, ?, ?)',
+                           (get_view_country[0], get_view_country[1], get_view_country[2],
+                            get_view_country[3], get_view_country[4], get_view_country[5]))
+            return events.CountrySavedEvent(get_view_country)
+        except sqlite3.IntegrityError:
+            return events.SaveCountryFailedEvent("Sorry, this Country is Invalid!")
+    else:
+        return events.SaveCountryFailedEvent("Sorry, this Country is Invalid!")
+
