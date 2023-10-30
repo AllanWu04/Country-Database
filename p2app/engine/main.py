@@ -68,6 +68,8 @@ class Engine:
                     make_region_obj = Region(i[0], i[1], i[2], i[3], i[4], i[5], i[6], i[7])
                     yield events.RegionSearchResultEvent(make_region_obj)
             yield engine_start_region_search_event(event, self.create_connection)
+        elif isinstance(event, events.LoadRegionEvent):
+            yield engine_region_loaded_event(event, self.create_connection)
         # This is a way to write a generator function that always yields zero values.
         # You'll want to remove this and replace it with your own code, once you start
         # writing your engine, but this at least allows the program to run.
