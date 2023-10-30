@@ -66,3 +66,17 @@ def engine_save_new_country(view_event, connection):
     else:
         return events.SaveCountryFailedEvent("Sorry, this Country is Invalid!")
 
+
+def engine_save_edited_country(view_event, connection):
+    """Edits a country that exists in the database"""
+    update_country = view_event.country()
+    if update_country[1] == '' or update_country[2] == '' or update_country[3] == '' or update_country[4] == '':
+        return events.SaveCountryFailedEvent("Sorry, this Country is Invalid!")
+    try:
+        change_country = connection.execute('UPDATE country '
+                                            'SET country_code = (?), name = (?), continent_id = (?), wikipedia_link = (?), keywords = (?) '
+                                            'WHERE country_id = (?)',
+                                            (update_country[1], update_country[2], update_country[3], update_country[4], update_country[5], update_country[0]))
+        return events.CountrySavedEvent(update_country)
+    except sqlite3.IntegrityError:
+        return events.SaveCountryFailedEvent("Sorry, this Country is Invalid!")
