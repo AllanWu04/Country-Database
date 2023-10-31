@@ -70,6 +70,8 @@ class Engine:
             yield engine_start_region_search_event(event, self.create_connection)
         elif isinstance(event, events.LoadRegionEvent):
             yield engine_region_loaded_event(event, self.create_connection)
+        elif isinstance(event, events.SaveNewRegionEvent):
+            yield engine_save_new_region_event(event, self.create_connection)
         # This is a way to write a generator function that always yields zero values.
         # You'll want to remove this and replace it with your own code, once you start
         # writing your engine, but this at least allows the program to run.

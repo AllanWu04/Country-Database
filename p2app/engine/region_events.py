@@ -1,3 +1,5 @@
+import sqlite3
+
 from .application_events import *
 from p2app import events
 from ..events import Region
@@ -45,5 +47,27 @@ def engine_region_loaded_event(view_event, connection):
     return events.RegionLoadedEvent(make_region_obj)
 
 
-
+def engine_save_new_region_event(view_event, connection):
+    """Creates a new region for the database"""
+    get_new_region = view_event.region()
+    check_if_region_exist = connection.execute('SELECT * FROM region WHERE region_code = (?)', (get_new_region[1],))
+    get_region_exist = check_if_region_exist.fetchone()
+    if get_region_exist is None and get_new_region[1] != '' and get_new_region[2] != '' and get_new_region[3] != '' and get_new_region[4] != '' and get_new_region[5] != '':
+        check_valid_continent_country_id = connection.execute('SELECT * '
+                                                                'FROM region '
+                                                                'WHERE continent_id = (?) and country_id = (?)',
+                                                                (get_new_region[4], get_new_region[5]))
+        check_if_exist = check_valid_continent_country_id.fetchone()
+        if check_if_exist is None:
+            return events.SaveRegionFailedEvent('Sorry, this continent/country do not match or exist!')
+        connection.execute('INSERT INTO region (region_id, region_code, local_code, name, continent_id, country_id, wikipedia_link, keywords) '
+                            'VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                            (get_new_region[0], get_new_region[1], get_new_region[2], get_new_region[3],
+                            get_new_region[4], get_new_region[5], get_new_region[6], get_new_region[7]))
+        return events.RegionSavedEvent(get_new_region)
+    else:
+        if get_region_exist:
+            return events.SaveRegionFailedEvent('Sorry, region code exists already!')
+        else:
+            return events.SaveRegionFailedEvent('Sorry, there are required values left empty!')
 
