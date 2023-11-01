@@ -59,7 +59,7 @@ def engine_save_new_continent(view_event, connection):
                            (get_continent_from_view[0], get_continent_from_view[1], get_continent_from_view[2]))
         return events.ContinentSavedEvent(get_continent_from_view)
     else:
-        return events.SaveContinentFailedEvent("This Continent is Invalid")
+        return events.SaveContinentFailedEvent("Sorry, the continent code is invalid!")
 
 
 def engine_save_edited_continent(view_event, connection):
@@ -69,12 +69,12 @@ def engine_save_edited_continent(view_event, connection):
     view_continent_code = get_view_continent.continent_code
     view_continent_name = get_view_continent.name
     if view_continent_code == '' or view_continent_name == '':
-        return events.SaveContinentFailedEvent("This Continent is Invalid!")
+        return events.SaveContinentFailedEvent("Sorry, there are required values that are empty!")
     try:
         cursor = connection.execute('UPDATE continent SET continent_code = (?), name = (?) '
                                     'WHERE continent_id = (?);',
                                     (view_continent_code, view_continent_name, view_continent_id))
         return events.ContinentSavedEvent(get_view_continent)
     except sqlite3.IntegrityError:
-        return events.SaveContinentFailedEvent("This Continent is Invalid!")
+        return events.SaveContinentFailedEvent("Sorry, the continent_code is invalid.")
 
