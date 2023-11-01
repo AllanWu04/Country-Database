@@ -40,11 +40,14 @@ def engine_start_region_search_event(view_event, connection):
 
 def engine_region_loaded_event(view_event, connection):
     """Loads information about a selected region"""
-    get_region_id = view_event.region_id()
-    find_region = connection.execute("SELECT * FROM region WHERE region_id = (?)", (get_region_id,))
-    get_info = find_region.fetchone()
-    make_region_obj = Region(get_info[0], get_info[1], get_info[2], get_info[3], get_info[4], get_info[5], get_info[6], get_info[7])
-    return events.RegionLoadedEvent(make_region_obj)
+    try:
+        get_region_id = view_event.region_id()
+        find_region = connection.execute("SELECT * FROM region WHERE region_id = (?)", (get_region_id,))
+        get_info = find_region.fetchone()
+        make_region_obj = Region(get_info[0], get_info[1], get_info[2], get_info[3], get_info[4], get_info[5], get_info[6], get_info[7])
+        return events.RegionLoadedEvent(make_region_obj)
+    except:
+        yield events.ErrorEvent('Sorry, a loading error occurred!')
 
 
 def engine_save_new_region_event(view_event, connection):
