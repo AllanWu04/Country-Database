@@ -60,6 +60,7 @@ def engine_save_new_country(view_event, connection):
                            'VALUES (?, ?, ?, ?, ?, ?);',
                            (get_view_country[0], get_view_country[1], get_view_country[2],
                             get_view_country[3], get_view_country[4], get_view_country[5]))
+            connection.commit()
             return events.CountrySavedEvent(get_view_country)
         except sqlite3.IntegrityError:
             return events.SaveCountryFailedEvent("Sorry, there are missing/invalid values for the country.")
@@ -80,6 +81,7 @@ def engine_save_edited_country(view_event, connection):
                                             'SET country_code = (?), name = (?), continent_id = (?), wikipedia_link = (?), keywords = (?) '
                                             'WHERE country_id = (?);',
                                             (update_country[1], update_country[2], update_country[3], update_country[4], update_country[5], update_country[0]))
+        connection.commit()
         return events.CountrySavedEvent(update_country)
     except sqlite3.IntegrityError:
         return events.SaveCountryFailedEvent("Sorry, the country code already exists in the database or continent_id is invalid!")

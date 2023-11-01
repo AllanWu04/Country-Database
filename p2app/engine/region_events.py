@@ -64,6 +64,7 @@ def engine_save_new_region_event(view_event, connection):
                             'VALUES (?, ?, ?, ?, ?, ?, ?, ?);',
                             (get_new_region[0], get_new_region[1], get_new_region[2], get_new_region[3],
                             get_new_region[4], get_new_region[5], get_new_region[6], get_new_region[7]))
+        connection.commit()
         return events.RegionSavedEvent(get_new_region)
     else:
         if get_region_exist:
@@ -97,6 +98,7 @@ def engine_save_edited_region(view_event, connection):
                                                          get_edited_region_info[3], get_edited_region_info[4],
                                                          get_edited_region_info[5], get_edited_region_info[6],
                                                          get_edited_region_info[7], get_edited_region_info[0]))
+            connection.commmit()
             return events.RegionSavedEvent(get_edited_region_info)
     else:
         return events.SaveRegionFailedEvent('Sorry, this region_code already exists!')
