@@ -37,15 +37,12 @@ def engine_continent_search_result(view_event, connection):
 
 def engine_continent_loaded(view_event, connection):
     """Loads information about continent when edited"""
-    try:
-        continent_id = view_event.continent_id()
-        cursor = connection.execute('SELECT continent_id, continent_code, name '
-                                    'FROM continent WHERE continent_id = (?);', (continent_id,))
-        get_info = cursor.fetchone()
-        create_continent = Continent(get_info[0], get_info[1], get_info[2])
-        return events.ContinentLoadedEvent(create_continent)
-    except:
-        yield events.ErrorEvent('Sorry, a loading error occurred!')
+    continent_id = view_event.continent_id()
+    cursor = connection.execute('SELECT continent_id, continent_code, name '
+                                'FROM continent WHERE continent_id = (?);', (continent_id,))
+    get_info = cursor.fetchone()
+    create_continent = Continent(get_info[0], get_info[1], get_info[2])
+    return events.ContinentLoadedEvent(create_continent)
 
 
 def engine_save_new_continent(view_event, connection):
@@ -62,7 +59,7 @@ def engine_save_new_continent(view_event, connection):
                            (get_continent_from_view[0], get_continent_from_view[1], get_continent_from_view[2]))
         return events.ContinentSavedEvent(get_continent_from_view)
     else:
-        return events.SaveContinentFailedEvent("Sorry, the continent code is invalid!")
+        return events.SaveContinentFailedEvent("Sorry, the continent code is invalid and/or required values missing!")
 
 
 def engine_save_edited_continent(view_event, connection):
