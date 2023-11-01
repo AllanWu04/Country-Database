@@ -11,26 +11,26 @@ def engine_start_region_search_event(view_event, connection):
     get_local_code = view_event.local_code()
     get_name = view_event.name()
     if get_region_code:
-        search_region = connection.execute('SELECT * FROM region WHERE region_code = (?)', (get_region_code,))
+        search_region = connection.execute('SELECT * FROM region WHERE region_code = (?);', (get_region_code,))
         get_region = search_region.fetchone()
         if get_region is None:
             return None
         make_region_obj = Region(get_region[0], get_region[1], get_region[2], get_region[3], get_region[4], get_region[5], get_region[6], get_region[7])
         return events.RegionSearchResultEvent(make_region_obj)
     elif get_region_code is None and get_local_code and get_name is None:
-        search_region = connection.execute('SELECT * FROM region WHERE local_code = (?)', (get_local_code,))
+        search_region = connection.execute('SELECT * FROM region WHERE local_code = (?);', (get_local_code,))
         get_region = search_region.fetchall()
         if get_region is None:
             return None
         return get_region
     elif get_region_code is None and get_local_code is None and get_name:
-        search_region = connection.execute('SELECT * FROM region WHERE name = (?)', (get_name,))
+        search_region = connection.execute('SELECT * FROM region WHERE name = (?);', (get_name,))
         get_region = search_region.fetchall()
         if get_region is None:
             return None
         return get_region
     elif get_region_code is None and get_local_code and get_name:
-        search_region = connection.execute('SELECT * FROM region WHERE local_code = (?) and name = (?)',
+        search_region = connection.execute('SELECT * FROM region WHERE local_code = (?) and name = (?);',
                                            (get_local_code, get_name))
         get_region = search_region.fetchall()
         if get_region is None:
@@ -41,7 +41,7 @@ def engine_start_region_search_event(view_event, connection):
 def engine_region_loaded_event(view_event, connection):
     """Loads information about a selected region"""
     get_region_id = view_event.region_id()
-    find_region = connection.execute("SELECT * FROM region WHERE region_id = (?)", (get_region_id,))
+    find_region = connection.execute('SELECT * FROM region WHERE region_id = (?);', (get_region_id,))
     get_info = find_region.fetchone()
     make_region_obj = Region(get_info[0], get_info[1], get_info[2], get_info[3], get_info[4], get_info[5], get_info[6], get_info[7])
     return events.RegionLoadedEvent(make_region_obj)
@@ -50,7 +50,7 @@ def engine_region_loaded_event(view_event, connection):
 def engine_save_new_region_event(view_event, connection):
     """Creates a new region for the database"""
     get_new_region = view_event.region()
-    check_if_region_exist = connection.execute('SELECT * FROM region WHERE region_code = (?)', (get_new_region[1],))
+    check_if_region_exist = connection.execute('SELECT * FROM region WHERE region_code = (?);', (get_new_region[1],))
     get_region_exist = check_if_region_exist.fetchone()
     if get_region_exist is None and get_new_region[1] != '' and get_new_region[2] != '' and get_new_region[3] != '' and get_new_region[4] != '' and get_new_region[5] != '':
         check_valid_continent_country_id = connection.execute('SELECT * '
@@ -61,7 +61,7 @@ def engine_save_new_region_event(view_event, connection):
         if check_if_exist is None:
             return events.SaveRegionFailedEvent('Sorry, this continent/country do not match or exist!')
         connection.execute('INSERT INTO region (region_id, region_code, local_code, name, continent_id, country_id, wikipedia_link, keywords) '
-                            'VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                            'VALUES (?, ?, ?, ?, ?, ?, ?, ?);',
                             (get_new_region[0], get_new_region[1], get_new_region[2], get_new_region[3],
                             get_new_region[4], get_new_region[5], get_new_region[6], get_new_region[7]))
         return events.RegionSavedEvent(get_new_region)
