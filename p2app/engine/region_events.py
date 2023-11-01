@@ -81,7 +81,7 @@ def engine_save_edited_region(view_event, connection):
                                                     (get_edited_region_info[1],))
     check_if_exist = check_if_valid_region_code.fetchone()
     if get_edited_region_info[1] == '' or get_edited_region_info[2] == '' or get_edited_region_info[3] == '' or get_edited_region_info[4] == '' or get_edited_region_info[5] == '':
-        return events.SaveRegionFailedEvent('There are required values left empty!')
+        return events.SaveRegionFailedEvent('Sorry, there are required values left empty!')
     if check_if_exist is None or check_if_exist[1] == get_edited_region_info[1]:
         check_if_valid_continent_country_id = connection.execute('SELECT * '
                                                                  'FROM region '
@@ -89,7 +89,7 @@ def engine_save_edited_region(view_event, connection):
                                                                  (get_edited_region_info[4], get_edited_region_info[5]))
         find_continent_country_pair = check_if_valid_continent_country_id.fetchone()
         if find_continent_country_pair is None:
-            return events.SaveRegionFailedEvent('This country and continent pair does not exist!')
+            return events.SaveRegionFailedEvent('Sorry, this country and continent pair does not exist!')
         else:
             connection.execute('UPDATE region '
                                'SET region_code = (?), local_code = (?), name = (?), continent_id = (?), country_id = (?), wikipedia_link = (?), keywords = (?) '
@@ -99,7 +99,7 @@ def engine_save_edited_region(view_event, connection):
                                                          get_edited_region_info[7], get_edited_region_info[0]))
             return events.RegionSavedEvent(get_edited_region_info)
     else:
-        return events.SaveRegionFailedEvent('This region_code already exists!')
+        return events.SaveRegionFailedEvent('Sorry, this region_code already exists!')
 
 
 
