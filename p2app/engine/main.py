@@ -41,7 +41,8 @@ class Engine:
                 for i in continent_results:
                     make_continent = Continent(i[0], i[1], i[2])
                     yield events.ContinentSearchResultEvent(make_continent)
-            yield engine_continent_search_result(event, self.create_connection)
+            else:
+                yield engine_continent_search_result(event, self.create_connection)
         elif isinstance(event, events.LoadContinentEvent):
             yield engine_continent_loaded(event, self.create_connection)
         elif isinstance(event, events.SaveNewContinentEvent):
@@ -54,7 +55,8 @@ class Engine:
                 for i in country_results:
                     make_country_obj = Country(i[0], i[1], i[2], i[3], i[4], i[5])
                     yield events.CountrySearchResultEvent(make_country_obj)
-            yield engine_start_country_search_event(event, self.create_connection)
+            else:
+                yield engine_start_country_search_event(event, self.create_connection)
         elif isinstance(event, events.LoadCountryEvent):
             yield engine_loaded_country_event(event, self.create_connection)
         elif isinstance(event, events.SaveNewCountryEvent):
@@ -67,7 +69,8 @@ class Engine:
                 for i in all_region_results:
                     make_region_obj = Region(i[0], i[1], i[2], i[3], i[4], i[5], i[6], i[7])
                     yield events.RegionSearchResultEvent(make_region_obj)
-            yield engine_start_region_search_event(event, self.create_connection)
+            else:
+                yield engine_start_region_search_event(event, self.create_connection)
         elif isinstance(event, events.LoadRegionEvent):
             yield engine_region_loaded_event(event, self.create_connection)
         elif isinstance(event, events.SaveNewRegionEvent):
