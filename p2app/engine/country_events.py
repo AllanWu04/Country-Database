@@ -74,7 +74,7 @@ def engine_save_new_country(view_event, connection):
 def engine_save_edited_country(view_event, connection):
     """Edits a country that exists in the database"""
     update_country = view_event.country()
-    if update_country[1] == '' or update_country[2] == '' or update_country[3] == 0 or update_country[4] == '':
+    if update_country[1] == '' or update_country[2] == '' or update_country[3] == 0 or update_country[4] is None:
         return events.SaveCountryFailedEvent("Sorry, there are required values left empty!")
     try:
         change_country = connection.execute('UPDATE country '

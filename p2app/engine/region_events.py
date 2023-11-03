@@ -52,7 +52,7 @@ def engine_save_new_region_event(view_event, connection):
     get_new_region = view_event.region()
     check_if_region_exist = connection.execute('SELECT * FROM region WHERE region_code = (?);', (get_new_region[1],))
     get_region_exist = check_if_region_exist.fetchone()
-    if get_region_exist is None and get_new_region[1] != '' and get_new_region[2] != '' and get_new_region[3] != '' and get_new_region[4] != '' and get_new_region[5] != '':
+    if get_region_exist is None and get_new_region[1] != '' and get_new_region[2] != '' and get_new_region[3] != '' and get_new_region[4] != 0 and get_new_region[5] != 0:
         connection.execute('INSERT INTO region (region_id, region_code, local_code, name, continent_id, country_id, wikipedia_link, keywords) '
                             'VALUES (?, ?, ?, ?, ?, ?, ?, ?);',
                             (get_new_region[0], get_new_region[1], get_new_region[2], get_new_region[3],
@@ -77,14 +77,17 @@ def engine_save_edited_region(view_event, connection):
     if get_edited_region_info[1] == '' or get_edited_region_info[2] == '' or get_edited_region_info[3] == '' or get_edited_region_info[4] == '' or get_edited_region_info[5] == '':
         return events.SaveRegionFailedEvent('Sorry, there are required values left empty!')
     if check_if_exist is None or check_if_exist[1] == get_edited_region_info[1]:
-        connection.execute('UPDATE region '
+        try:
+            connection.execute('UPDATE region '
                             'SET region_code = (?), local_code = (?), name = (?), continent_id = (?), country_id = (?), wikipedia_link = (?), keywords = (?) '
                             'WHERE region_id = (?);', (get_edited_region_info[1], get_edited_region_info[2],
                                                         get_edited_region_info[3], get_edited_region_info[4],
                                                         get_edited_region_info[5], get_edited_region_info[6],
                                                         get_edited_region_info[7], get_edited_region_info[0]))
-        connection.commit()
-        return events.RegionSavedEvent(get_edited_region_info)
+            connection.commit()
+            return events.RegionSavedEvent(get_edited_region_info)
+        except sqlite3.IntegrityError:
+            return events.SaveRegionFailedEvent('Sorry, this region code already exists!')
     else:
         return events.SaveRegionFailedEvent('Sorry, this region_code already exists!')
 
