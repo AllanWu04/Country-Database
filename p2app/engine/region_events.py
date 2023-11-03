@@ -79,7 +79,7 @@ def engine_save_edited_region(view_event, connection):
     if check_if_exist is None or check_if_exist[1] == get_edited_region_info[1]:
         connection.execute('UPDATE region '
                             'SET region_code = (?), local_code = (?), name = (?), continent_id = (?), country_id = (?), wikipedia_link = (?), keywords = (?) '
-                            'WHERE region_id = (?)', (get_edited_region_info[1], get_edited_region_info[2],
+                            'WHERE region_id = (?);', (get_edited_region_info[1], get_edited_region_info[2],
                                                         get_edited_region_info[3], get_edited_region_info[4],
                                                         get_edited_region_info[5], get_edited_region_info[6],
                                                         get_edited_region_info[7], get_edited_region_info[0]))
